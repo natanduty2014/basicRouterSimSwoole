@@ -6,6 +6,7 @@ COPY ./docker/entrypoint.sh /home/entrypoint.sh
 # make entrypoint executable
 RUN chmod +x /home/entrypoint.sh
 
+
 WORKDIR /public
 
 RUN apt-get update && apt-get install vim -y && \
