@@ -73,6 +73,44 @@ Depois de terminar release ou hotfix:
 git push origin main develop --tags
 ```
 
+## 6) Tags
+
+Listar tags:
+
+```
+git tag
+```
+
+Ver detalhes de uma tag:
+
+```
+git show v1.0.0
+```
+
+Criar tag manual:
+
+```
+git tag -a v1.0.1 -m "release 1.0.1"
+```
+
+Enviar tags:
+
+```
+git push origin --tags
+```
+
+Apagar tag local:
+
+```
+git tag -d v1.0.0
+```
+
+Apagar tag remota:
+
+```
+git push origin :refs/tags/v1.0.0
+```
+
 ## Dicas
 
 - Use nomes claros para feature: feature/ajuste-login
