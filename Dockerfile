@@ -36,17 +36,10 @@ RUN set -ex \
     && apt clean && rm -rf /var/lib/apt/lists && rm -rf /tmp/pear
 
 
-# RUN pecl install -o -f redis \
-# &&  rm -rf /tmp/pear \
-# &&  docker-php-ext-enable redis
 
 RUN docker-php-ext-install pdo_mysql
 
-# RUN pecl install runkit7-4.0.0a6 \
-#     && docker-php-ext-enable runkit7
 
-# RUN pecl install xdebug-3.2.1 \
-#     && docker-php-ext-enable xdebug
 
 # Configuração adicional para a extensão GD com suporte a JPEG, PNG e WebP
 RUN apt-get update && \
@@ -62,8 +55,7 @@ RUN apt-get install -y libz-dev && \
 
 RUN apt-get install libsodium-dev -y
 RUN docker-php-ext-install sodium
-#RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - &&\
-#apt-get install -y nodejs
+
 
 # Configurar o fuso horário
 RUN ln -sf /usr/share/zoneinfo/America/Fortaleza /etc/localtime
@@ -83,19 +75,12 @@ RUN apt-get update && apt-get install -y \
 # Instala a extensão GMP via script interno do Docker
 RUN docker-php-ext-install gmp
 
-# (Opcional) Se precisar ativar manualmente via ini, faça:
-# RUN docker-php-ext-enable gmp
-
-# netcat
-# RUN apt-get update && apt-get install netcat -y
 #memory limit
 RUN echo "memory_limit = 256M" > /usr/local/etc/php/conf.d/memory-limit.ini
 
 RUN git config --global --add safe.directory /public
 
 RUN composer self-update --2
-
-
 
 RUN mkdir -p /var/log/supervisor
 
