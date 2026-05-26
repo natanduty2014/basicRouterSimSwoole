@@ -1,0 +1,115 @@
+services:
+
+  phpswoole:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      x-develop:
+        watch:
+          - action: sync
+            path: ./
+            target: /public
+
+    working_dir: /public
+    volumes:
+      - '.:/public'
+      - ./logs/docker/:/var/log/
+    # entrypoint: /home/entrypoint.sh
+    ports:
+      - ${WEB_PORT}:9502
+      - ${WEB_HOTRELOAD_PORT}:9504
+    deploy:
+      resources:
+        limits:
+          cpus: '${WEB_CPU_QUANT}'
+          memory: ${WEB_MEM_QUANT}
+        reservations:
+          cpus: '${WEB_CPU_RESERV}'
+          memory: ${WEB_MEM_RESERV}
+    environment:
+      TZ: '${DATABASE_TIMEZONE}'
+      GOOGLE_ANALYTICS_CLIENT_ID: '${GOOGLE_ANALYTICS_CLIENT_ID}'
+      GOOGLE_ANALYTICS_CLIENT_SECRET: '${GOOGLE_ANALYTICS_CLIENT_SECRET}'
+      GOOGLE_ANALYTICS_REFRESH_TOKEN: '${GOOGLE_ANALYTICS_REFRESH_TOKEN}'
+      GOOGLE_ANALYTICS_PROPERTY_ID: '${GOOGLE_ANALYTICS_PROPERTY_ID}'
+    restart: always
+    networks:
+      - default
+
+  redis:
+    image: 'redis:7'
+    container_name: redis${PROJECT_NAME}
+    restart: always
+    ports:
+      - '${REDIS_PORT}:6379'
+    command: redis-server --save 20 1 --loglevel warning --requirepass ${SERVERCACHE_PASSWORD}
+    volumes:
+      - "./redis/cache:/data"
+    deploy:
+      resources:
+        limits:
+          cpus: '${SERVERCACHE_CPU_QUANT}'
+          memory: ${SERVERCACHE_MEM_QUANT}
+        reservations:
+          cpus: '${SERVERCACHE_CPU_RESERV}'
+          memory: ${SERVERCACHE_MEM_RESERV}
+    environment:
+      TZ: '${DATABASE_TIMEZONE}'
+    networks:
+      - default
+  # db:
+  #   image: mysql:5.7
+  #   container_name: db${PROJECT_NAME}
+  #   entrypoint: [ "sh", "-c", "docker-entrypoint.sh --innodb-buffer-pool-size=500M --max-allowed-packet=256M --max-connections=200 && sleep 10 && python3 /backup/jobBackup.py & tail -f /dev/null" ]
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD_ROOT}
+  #     MYSQL_DATABASE: ${DATABASE_DATABASE}
+  #     MYSQL_USER: ${DATABASE_USER}
+  #     MYSQL_PASSWORD: ${DATABASE_PASSWORD}
+  #     TZ: '${DATABASE_TIMEZONE}'
+  #   volumes:
+  #     - dbdata:/var/lib/mysql
+  #     - ./dump:/docker-entrypoint-initdb.d
+  #     - ./data/backup:/backup
+  #     - ./data/backup/jobBackup.py:/backup/jobBackup.py
+  #   restart: always
+  #   ports:
+  #     - ${DATABASE_PORT}:3306
+  #   networks:
+  #     - default
+
+  # phpmyadmin:
+  #   image: phpmyadmin/phpmyadmin
+  #   container_name: PHPMYADMIN${PROJECT_NAME}
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: '${DATABASEMANAGER_CPU_QUANT}'
+  #         memory: ${DATABASEMANAGER_MEM_QUANT}
+  #       reservations:
+  #         cpus: '${DATABASEMANAGER_CPU_RESERV}'
+  #         memory: ${DATABASEMANAGER_MEM_RESERV}
+  #   depends_on:
+  #     - db
+  #   links:
+  #     - db
+  #   environment:
+  #     PMA_HOST: db
+  #     PMA_PORT: 3306
+  #     PMA_ARBITRARY: 1
+  #     TZ: '${DATABASE_TIMEZONE}'
+  #     UPLOAD_LIMIT: 500M
+  #   restart: always
+  #   ports:
+  #     - ${PHPMYADMIN_PORT}:80
+  #   networks:
+  #     - default
+  # #docker network create --driver bridge ecommerce-modelo
+networks:
+  default:
+    name: ${NETWORK_NAME}
+    external: true
+
+volumes:
+  dbdata:
+    driver: local

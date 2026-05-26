@@ -1,0 +1,1 @@
+gere a documentação em swagger de @eventsSpeakers.php   de todos os metodos em anotation (pegue as rotas do @routerSlim.php (pegue do schemas EventSpeaker) //gerar documentação para o swagger

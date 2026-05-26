@@ -1,0 +1,8 @@
+redis/
+project/public/uploads/filesa/67c1c6c0586e2.csv
+vendor/
+dump/app_db.sql
+dump/
+.DS_Store
+public/uploads/*
+.env
