@@ -35,10 +35,7 @@ RUN set -ex \
     && docker-php-ext-enable inotify \
     && apt clean && rm -rf /var/lib/apt/lists && rm -rf /tmp/pear
 
-
-
 RUN docker-php-ext-install pdo_mysql
-
 
 
 # Configuração adicional para a extensão GD com suporte a JPEG, PNG e WebP
