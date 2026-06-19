@@ -6,3 +6,4 @@ dump/
 .DS_Store
 public/uploads/*
 .env
+.teste
